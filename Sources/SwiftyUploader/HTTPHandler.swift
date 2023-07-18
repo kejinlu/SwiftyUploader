@@ -1,0 +1,51 @@
+//
+//  File.swift
+//  
+//
+//  Created by kejinlu on 2023/6/28.
+//
+
+import NIO
+import NIOPosix
+
+import NIOCore
+import NIOPosix
+import NIOHTTP1
+import Foundation
+
+@available(iOS 13.4, *)
+final class HTTPHandler: ChannelInboundHandler {
+    public typealias InboundIn = HTTPServerRequestPart
+    public typealias OutboundOut = HTTPServerResponsePart
+    
+    private var responder = Responder()
+
+    func channelRead(context: ChannelHandlerContext, data: NIOAny) {
+        let reqPart = self.unwrapInboundIn(data)
+
+        switch reqPart {
+        case .head(let head):
+            responder.respondHead(head, context: context, wrapOutboundOut: self.wrapOutboundOut)
+            break
+        case .body(let bytes):
+            let data = bytes.withUnsafeReadableBytes({ Data($0) })
+            self.responder.respondBody(data: data)
+            break
+        case .end:
+            self.responder.respondEnd()
+        }
+    }
+
+    func channelReadComplete(context: ChannelHandlerContext) {
+        context.flush()
+    }
+    
+    func errorCaught(
+        context: ChannelHandlerContext,
+        error: Error
+    ) {
+        print(error)
+
+        context.close(promise: nil)
+    }
+}

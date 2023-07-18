@@ -1,0 +1,6 @@
+"PROLOGUE" = "<p>将文件拖拽到此窗口或者使用\"上传\" 按钮进行上传。</p>";
+"EPILOGUE" = "";
+"FOOTER_FORMAT" = "%@ %@";
+"UPLOAD_FILES" = "上传文件&hellip;";
+"CREATE_FOLDER" = "创建文件夹&hellip;";
+"REFRESH" = "刷新";
