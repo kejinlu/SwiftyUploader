@@ -2,5 +2,8 @@
 "EPILOGUE" = "";
 "FOOTER_FORMAT" = "%@ %@";
 "UPLOAD_FILES" = "Upload Files&hellip;";
-"CREATE_FOLDER" = "Create Folder&hellip;";
+"CREATE_FOLDER" = "Create Folder";
+"CREATE_FOLDER_TIP" = "Please enter the name of the folder to be created";
+"UPLOADING_TIP" = "File Uploads in Progress";
 "REFRESH" = "Refresh";
+"CANCEL" = "Cancel";

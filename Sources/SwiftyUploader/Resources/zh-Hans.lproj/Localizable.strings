@@ -2,5 +2,8 @@
 "EPILOGUE" = "";
 "FOOTER_FORMAT" = "%@ %@";
 "UPLOAD_FILES" = "上传文件&hellip;";
-"CREATE_FOLDER" = "创建文件夹&hellip;";
+"CREATE_FOLDER" = "创建文件夹";
+"CREATE_FOLDER_TIP" = "请输入要创建的文件夹名称";
+"UPLOADING_TIP" = "文件正在上传中";
 "REFRESH" = "刷新";
+"CANCEL" = "取消";

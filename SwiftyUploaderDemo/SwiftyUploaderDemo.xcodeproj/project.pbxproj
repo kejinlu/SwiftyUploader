@@ -16,6 +16,7 @@
 
 /* Begin PBXFileReference section */
 		690F66272A4C633F00B22AEC /* SwiftyUploader */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = SwiftyUploader; path = ..; sourceTree = "<group>"; };
+		69238E9F2A67E87E0033DBCF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		69C2FE0C2A3C8529003EC17A /* SwiftyUploaderDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftyUploaderDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69C2FE0F2A3C8529003EC17A /* SwiftyUploaderDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftyUploaderDemoApp.swift; sourceTree = "<group>"; };
 		69C2FE112A3C8529003EC17A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -64,6 +65,7 @@
 		69C2FE0E2A3C8529003EC17A /* SwiftyUploaderDemo */ = {
 			isa = PBXGroup;
 			children = (
+				69238E9F2A67E87E0033DBCF /* Info.plist */,
 				69C2FE0F2A3C8529003EC17A /* SwiftyUploaderDemoApp.swift */,
 				69C2FE112A3C8529003EC17A /* ContentView.swift */,
 				69C2FE132A3C852A003EC17A /* Assets.xcassets */,
@@ -293,6 +295,7 @@
 				DEVELOPMENT_TEAM = 69LBGZK9BV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwiftyUploaderDemo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -322,6 +325,7 @@
 				DEVELOPMENT_TEAM = 69LBGZK9BV;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SwiftyUploaderDemo/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
