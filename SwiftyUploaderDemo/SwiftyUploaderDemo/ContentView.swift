@@ -9,16 +9,15 @@ import SwiftUI
 import SwiftyUploader
 
 struct ContentView: View {
+    @State var uploader:SwiftyUploader?
     var body: some View {
         VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!").onAppear(){
-                let queue = DispatchQueue(label: "com.omg.td")
+            Text(uploader == nil ? "Starting...":"Started, please visit")
+            Text(uploader == nil ? "":"http://"+uploader!.getIPAddress()).onAppear(){
+                let queue = DispatchQueue(label: "com.kejinlu.uploaderdemo")
                     queue.async {
-                        let app = SwiftyUploader()
-                        app.run()
+                        uploader = SwiftyUploader()
+                        uploader?.run()
                     }
             }
         }
