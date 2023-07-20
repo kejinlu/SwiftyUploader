@@ -14,9 +14,9 @@ import NIOCore
 class IndexHtmlProcessor: Processor {
     typealias ResultType = String
     
-    static func process(responder:Responder, result:(String?)->Void){
+    static func process(responder:Responder, result:(Bool, String)->Void){
         let indexPath = Bundle.module.path(forResource: "index", ofType: "html")
-        var html: String? = nil
+        var html = ""
         do {
             html = try String.init(contentsOfFile: indexPath ?? "Hello")
             let device = UIDevice.current.name;
@@ -31,21 +31,21 @@ class IndexHtmlProcessor: Processor {
             let refresh = Bundle.module.localizedString(forKey: "REFRESH", value: "", table: nil)
             let cancel = Bundle.module.localizedString(forKey: "CANCEL", value: "", table: nil)
             
-            html = html?.replacingOccurrences(of: "%device%", with: device)
-            html = html?.replacingOccurrences(of: "%header%", with: header ?? "")
-            html = html?.replacingOccurrences(of: "%prologue%", with: prologue)
-            html = html?.replacingOccurrences(of: "%epilogue%", with: epilogue)
-            html = html?.replacingOccurrences(of: "%title%", with: title ?? "")
-            html = html?.replacingOccurrences(of: "%upload_files%", with: upload_files)
-            html = html?.replacingOccurrences(of: "%create_folder%", with: create_folder)
-            html = html?.replacingOccurrences(of: "%create_folder_tip%", with: create_folder_tip)
-            html = html?.replacingOccurrences(of: "%uploading_tip%", with: uploading_tip)
-            html = html?.replacingOccurrences(of: "%refresh%", with: refresh)
-            html = html?.replacingOccurrences(of: "%cancel%", with: cancel)
+            html = html.replacingOccurrences(of: "%device%", with: device)
+            html = html.replacingOccurrences(of: "%header%", with: header ?? "")
+            html = html.replacingOccurrences(of: "%prologue%", with: prologue)
+            html = html.replacingOccurrences(of: "%epilogue%", with: epilogue)
+            html = html.replacingOccurrences(of: "%title%", with: title ?? "")
+            html = html.replacingOccurrences(of: "%upload_files%", with: upload_files)
+            html = html.replacingOccurrences(of: "%create_folder%", with: create_folder)
+            html = html.replacingOccurrences(of: "%create_folder_tip%", with: create_folder_tip)
+            html = html.replacingOccurrences(of: "%uploading_tip%", with: uploading_tip)
+            html = html.replacingOccurrences(of: "%refresh%", with: refresh)
+            html = html.replacingOccurrences(of: "%cancel%", with: cancel)
         } catch {
             
         }
-        result(html)
+        result(true, html)
     }
     
 }

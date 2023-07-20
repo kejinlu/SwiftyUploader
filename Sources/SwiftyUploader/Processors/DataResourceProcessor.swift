@@ -9,8 +9,8 @@ import Foundation
 
 @available(iOS 13.4, *)
 class DataResourceProcessor: Processor {
-    static func process(responder:Responder, result: (Data?) -> Void) {
-        var resultData:Data? = nil
+    static func process(responder:Responder, result: (Bool, Data) -> Void) {
+        var resultData = Data()
         if let uri = responder.requestHead?.uri{
             var path = uri
             if(path.hasPrefix("/fonts")) {
@@ -22,11 +22,11 @@ class DataResourceProcessor: Processor {
                 let filename = String(pathElements[1])
                 
                 if let fontPath = Bundle.module.path(forResource: filename, ofType: "", inDirectory: directory) {
-                    resultData = FileManager.default.contents(atPath: fontPath)
+                    resultData = FileManager.default.contents(atPath: fontPath) ?? Data()
                 }
             }
         }
-        result(resultData)
+        result(true, resultData)
     }
     
     typealias ResultType = Data

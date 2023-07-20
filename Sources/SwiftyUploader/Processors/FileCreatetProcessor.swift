@@ -9,7 +9,7 @@ import Foundation
 
 @available(iOS 13.4, *)
 class FileCreateProcessor:Processor {
-    static func process(responder: Responder, result: (String?) -> Void) {
+    static func process(responder: Responder, result: (Bool, String) -> Void) {
         if let bodyData = responder.requestBody {
             let body = String(decoding: bodyData, as: UTF8.self)
             if let path = body.components(separatedBy: "=").last?.removingPercentEncoding?.replacingOccurrences(of: "+", with: " ") {
@@ -17,7 +17,7 @@ class FileCreateProcessor:Processor {
                 try? FileManager.default.createDirectory(atPath: documentPath+path, withIntermediateDirectories: true)
             }
         }
-        result("{}")
+        result(true, "{}")
     }
     
     typealias ResultType = String

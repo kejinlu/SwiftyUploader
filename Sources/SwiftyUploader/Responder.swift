@@ -94,42 +94,36 @@ class Responder {
         // 下载文件的流程需要特殊处理
         if head.uri.hasPrefix("/download") {
             FileDownloadProcessor.process(responder: self) {
-                _ in
+                _, _ in
             }
         } else {
             if head.uri == "/" {
                 IndexHtmlProcessor.process(responder: self) {
-                    html in
-                    if let html {
-                        self.buffer.writeString(html)
-                    }
+                    success, html in
+                    self.buffer.writeString(html)
                 }
                 self.responseHead?.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
             } else if head.uri.hasPrefix("/css") ||
                 head.uri.hasPrefix("/js")
             {
                 TextResourceProcessor.process(responder: self) {
-                    text in
-                    if let text {
-                        self.buffer.writeString(text)
-                    }
+                    success, text in
+                    self.buffer.writeString(text)
                 }
                 self.responseHead?.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
             } else if head.uri.hasPrefix("/fonts") {
                 var responseHead = httpResponseHead(requestHead: head, status: HTTPResponseStatus.ok)
                 
                 DataResourceProcessor.process(responder: self) {
-                    data in
-                    if let data {
-                        self.buffer.writeBytes([UInt8](data))
-                    }
+                    success, data in
+                    self.buffer.writeBytes([UInt8](data))
                 }
                 responseHead.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
                 responseHead.headers.add(name: "content-type", value: "application/octet-stream")
             } else if head.uri.hasPrefix("/list") {
                 FileListProcessor.process(responder: self) {
-                    result in
-                    self.buffer.writeString(result ?? "")
+                    success, result in
+                    self.buffer.writeString(result)
                 }
                 self.responseHead?.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
             } else if head.uri.hasPrefix("/upload") {
@@ -138,21 +132,21 @@ class Responder {
 
             } else if head.uri.hasPrefix("/create") {
                 FileCreateProcessor.process(responder: self) {
-                    result in
-                    self.buffer.writeString(result!)
+                    success, result in
+                    self.buffer.writeString(result)
                 }
                 var responseHead = httpResponseHead(requestHead: head, status: HTTPResponseStatus.ok)
                 
                 responseHead.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
             } else if head.uri.hasPrefix("/move") {
                 FileMoveProcessor.process(responder: self) {
-                    result in
-                    self.buffer.writeString(result!)
+                    success, result in
+                    self.buffer.writeString(result)
                 }
             } else if head.uri.hasPrefix("/delete") {
                 FileDeleteProcessor.process(responder: self) {
-                    result in
-                    self.buffer.writeString(result!)
+                    success, result in
+                    self.buffer.writeString(result)
                 }
             }
             

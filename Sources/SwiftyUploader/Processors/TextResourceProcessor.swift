@@ -9,8 +9,8 @@ import Foundation
 
 @available(iOS 13.4, *)
 class TextResourceProcessor:Processor {
-    static func process(responder:Responder, result: (String?) -> Void) {
-        var resultText:String? = nil
+    static func process(responder:Responder, result: (Bool, String) -> Void) {
+        var resultText = ""
         if let uri = responder.requestHead?.uri {
             var path = uri
             if(path.hasPrefix("/")) {
@@ -29,7 +29,7 @@ class TextResourceProcessor:Processor {
                 }
             }
         }
-        result(resultText)
+        result(true, resultText)
     }
     
     typealias ResultType = String

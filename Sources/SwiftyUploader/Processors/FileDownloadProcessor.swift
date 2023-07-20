@@ -12,7 +12,7 @@ import NIOHTTP1
 class FileDownloadProcessor: Processor {
     static var readFileHandle:FileHandle?
     
-    static func process(responder: Responder, result: (String?) -> Void) {
+    static func process(responder: Responder, result: (Bool, String) -> Void) {
         if let uri = responder.requestHead?.uri {
             let url = URL(
                 string: "http://placeholder.com"+uri

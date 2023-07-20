@@ -9,8 +9,8 @@ import Foundation
 
 @available(iOS 13.4, *)
 class FileListProcessor:Processor {
-    static func process(responder: Responder, result: (String?) -> Void) {
-        var jsonResult:String? = nil
+    static func process(responder: Responder, result: (Bool, String) -> Void) {
+        var jsonResult = ""
         if let uri = responder.requestHead?.uri {
             let url = URL(
                 string: "http://placeholder.com"+uri
@@ -57,11 +57,11 @@ class FileListProcessor:Processor {
                 
             }
             if let data = try? JSONSerialization.data(withJSONObject: listData, options: []) as NSData?{
-                jsonResult = String(data:data as Data,encoding: String.Encoding.utf8)
+                jsonResult = String(data:data as Data,encoding: String.Encoding.utf8) ?? ""
             }
         }
 
-        result(jsonResult)
+        result(true, jsonResult)
     }
     
     typealias ResultType = String

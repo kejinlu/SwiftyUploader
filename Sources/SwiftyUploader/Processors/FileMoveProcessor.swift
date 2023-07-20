@@ -9,7 +9,7 @@ import Foundation
 
 @available(iOS 13.4, *)
 class FileMoveProcessor:Processor {
-    static func process(responder: Responder, result: (String?) -> Void) {
+    static func process(responder: Responder, result: (Bool, String) -> Void) {
         if let bodyData = responder.requestBody {
             let body = String(decoding: bodyData, as: UTF8.self)
             var components = URLComponents()
@@ -33,7 +33,7 @@ class FileMoveProcessor:Processor {
                 }
             }
         }
-        result("{}")
+        result(true, "{}")
     }
     
     typealias ResultType = String
