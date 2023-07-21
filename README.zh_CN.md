@@ -1,5 +1,5 @@
 <picture>
-  <img src="https://raw.githubusercontent.com/kejinlu/SwiftyUploader/72fffe1c9d5363d55bf6361c206fdf24e5e4a73c/logo.svg" alt="SwiftyUploader logo" height="70">
+  <img src="https://raw.githubusercontent.com/kejinlu/SwiftyUploader/main/assets/logo.svg" alt="SwiftyUploader logo" height="70">
 </picture>
 
 # 概述
@@ -49,3 +49,10 @@ uploader.run()
 </dict>
 </plist>
 ```
+
+<picture>
+  <img src="https://raw.githubusercontent.com/kejinlu/SwiftyUploader/main/assets/webui1.png" alt="SwiftyUploader logo" width="70%">
+</picture>
+<picture>
+  <img src="https://raw.githubusercontent.com/kejinlu/SwiftyUploader/main/assets/webui2.png" alt="SwiftyUploader logo" width="70%">
+</picture>
