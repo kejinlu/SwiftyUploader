@@ -8,13 +8,13 @@ SwiftyUploader的Web页面部分使用了 [GCDWebUploader](https://github.com/sw
 
 # 使用
 
-## Requirements
+## 要求
 
 - iOS 14.0+
 - Xcode 14.3
 - Swift 5.8
 
-## Integration
+## 集成
 你可以使用 [The Swift Package Manager](https://swift.org/package-manager) 进行集成，如果仅仅测试的可以直接使用本地依赖的方式进行测试
 
 ```swift
@@ -30,7 +30,7 @@ let package = Package(
 ```
 Then run `swift build` whenever you get prepared.
 
-## Code
+## 代码
 
 ```swift
 let uploader = SwiftyUploader()
@@ -52,7 +52,4 @@ uploader.run()
 
 <picture>
   <img src="https://raw.githubusercontent.com/kejinlu/SwiftyUploader/main/assets/webui1.png" alt="SwiftyUploader logo" width="70%">
-</picture>
-<picture>
-  <img src="https://raw.githubusercontent.com/kejinlu/SwiftyUploader/main/assets/webui2.png" alt="SwiftyUploader logo" width="70%">
 </picture>
