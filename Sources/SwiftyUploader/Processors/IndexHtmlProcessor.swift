@@ -1,25 +1,25 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by kejinlu on 2023/7/12.
 //
 
 import Foundation
-import UIKit
-import NIOHTTP1
 import NIOCore
+import NIOHTTP1
+import UIKit
 
 @available(iOS 13.4, *)
 class IndexHtmlProcessor: Processor {
     typealias ResultType = String
-    
-    static func process(responder:Responder, result:(Bool, String)->Void){
-        let indexPath = Bundle.module.path(forResource: "index", ofType: "html")
+
+    static func process(responder: Responder, result: (Bool, String) -> Void) {
         var html = ""
+        let indexPath = Bundle.module.path(forResource: "index", ofType: "html")
         do {
-            html = try String.init(contentsOfFile: indexPath ?? "Hello")
-            let device = UIDevice.current.name;
+            html = try String(contentsOfFile: indexPath ?? "Hello")
+            let device = UIDevice.current.name
             let title = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
             let header = title
             let prologue = Bundle.module.localizedString(forKey: "PROLOGUE", value: "", table: nil)
@@ -30,7 +30,7 @@ class IndexHtmlProcessor: Processor {
             let uploading_tip = Bundle.module.localizedString(forKey: "UPLOADING_TIP", value: "", table: nil)
             let refresh = Bundle.module.localizedString(forKey: "REFRESH", value: "", table: nil)
             let cancel = Bundle.module.localizedString(forKey: "CANCEL", value: "", table: nil)
-            
+
             html = html.replacingOccurrences(of: "%device%", with: device)
             html = html.replacingOccurrences(of: "%header%", with: header ?? "")
             html = html.replacingOccurrences(of: "%prologue%", with: prologue)
@@ -42,10 +42,7 @@ class IndexHtmlProcessor: Processor {
             html = html.replacingOccurrences(of: "%uploading_tip%", with: uploading_tip)
             html = html.replacingOccurrences(of: "%refresh%", with: refresh)
             html = html.replacingOccurrences(of: "%cancel%", with: cancel)
-        } catch {
-            
-        }
+        } catch {}
         result(true, html)
     }
-    
 }

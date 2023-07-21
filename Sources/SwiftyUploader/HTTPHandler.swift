@@ -6,7 +6,6 @@
 //
 import Foundation
 import NIO
-import NIOPosix
 import NIOCore
 import NIOHTTP1
 import NIOPosix

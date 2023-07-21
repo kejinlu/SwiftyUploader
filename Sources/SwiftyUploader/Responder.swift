@@ -28,38 +28,42 @@ private func httpResponseHead(requestHead: HTTPRequestHead, status: HTTPResponse
 
 @available(iOS 13.4, *)
 class Responder {
-    var requestHead: HTTPRequestHead?
+    // Context
+    var context: ChannelHandlerContext!
+    var wrapOutboundOut: ((HTTPServerResponsePart) -> NIOAny)!
+    
+    // Request related
+    var requestHead: HTTPRequestHead!
     var requestBody: Data?
     
+    // Response related
     var responseHead: HTTPResponseHead?
-    
-    var context: ChannelHandlerContext?
-    var wrapOutboundOut: ((HTTPServerResponsePart) -> NIOAny)?
+    var responseBodyBuffer: ByteBuffer!
         
-    var buffer: ByteBuffer!
-        
+    // Multipart body parser for file uploading
     var multipartParser: MultipartFormDataParser?
 
     /// Handle the head part
     /// reset the state
     func respondHead(_ head: HTTPRequestHead, context: ChannelHandlerContext, wrapOutboundOut: @escaping (HTTPServerResponsePart) -> NIOAny) {
-        if self.buffer == nil {
-            self.buffer = context.channel.allocator.buffer(capacity: 0)
-        }
-        self.buffer.clear()
-        
-        self.requestHead = head
         self.context = context
         self.wrapOutboundOut = wrapOutboundOut
         
+        self.requestHead = head
         self.requestBody = nil
+        
+        if self.responseBodyBuffer == nil {
+            self.responseBodyBuffer = context.channel.allocator.buffer(capacity: 0)
+        }
+        self.responseBodyBuffer?.clear()
+        
         self.multipartParser = nil
         
         if head.method == .POST {
             if head.uri.hasPrefix("/upload") {
-                let contentType: String = head.headers["Content-Type"][0]
-                let boundary = contentType.components(separatedBy: "=")[1]
-                self.multipartParser = MultipartFormDataParser(boundary: boundary)
+                if let boundary = head.headers.first(name: "Content-Type")?.components(separatedBy: "=").last {
+                    self.multipartParser = MultipartFormDataParser(boundary: boundary)
+                }
             } else {
                 self.requestBody = Data()
             }
@@ -80,8 +84,7 @@ class Responder {
     func respondEnd() {
         if self.requestHead == nil ||
             self.context == nil ||
-            self.wrapOutboundOut == nil
-        {
+            self.wrapOutboundOut == nil {
             return
         }
         
@@ -99,59 +102,67 @@ class Responder {
         } else {
             if head.uri == "/" {
                 IndexHtmlProcessor.process(responder: self) {
-                    success, html in
-                    self.buffer.writeString(html)
+                    _, html in
+                    self.responseBodyBuffer?.writeString(html)
                 }
-                self.responseHead?.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
+                self.responseHead?.headers.add(name: "content-length", value: "\(self.responseBodyBuffer!.readableBytes)")
             } else if head.uri.hasPrefix("/css") ||
-                head.uri.hasPrefix("/js")
-            {
+                head.uri.hasPrefix("/js") {
                 TextResourceProcessor.process(responder: self) {
-                    success, text in
-                    self.buffer.writeString(text)
+                    _, text in
+                    self.responseBodyBuffer?.writeString(text)
                 }
-                self.responseHead?.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
+                self.responseHead?.headers.add(name: "content-length", value: "\(self.responseBodyBuffer!.readableBytes)")
             } else if head.uri.hasPrefix("/fonts") {
                 var responseHead = httpResponseHead(requestHead: head, status: HTTPResponseStatus.ok)
                 
                 DataResourceProcessor.process(responder: self) {
-                    success, data in
-                    self.buffer.writeBytes([UInt8](data))
+                    _, data in
+                    self.responseBodyBuffer?.writeBytes([UInt8](data))
                 }
-                responseHead.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
+                responseHead.headers.add(name: "content-length", value: "\(self.responseBodyBuffer!.readableBytes)")
                 responseHead.headers.add(name: "content-type", value: "application/octet-stream")
             } else if head.uri.hasPrefix("/list") {
                 FileListProcessor.process(responder: self) {
                     success, result in
-                    self.buffer.writeString(result)
+                    if !success {
+                        self.responseHead?.status = .badRequest
+                    }
+                    self.responseBodyBuffer?.writeString(result)
                 }
-                self.responseHead?.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
-            } else if head.uri.hasPrefix("/upload") {
-                self.buffer.writeString("{}")
-                self.responseHead?.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
-
+                self.responseHead?.headers.add(name: "content-length", value: "\(self.responseBodyBuffer!.readableBytes)")
             } else if head.uri.hasPrefix("/create") {
                 FileCreateProcessor.process(responder: self) {
                     success, result in
-                    self.buffer.writeString(result)
+                    if !success {
+                        self.responseHead?.status = .badRequest
+                    }
+                    self.responseBodyBuffer?.writeString(result)
                 }
-                var responseHead = httpResponseHead(requestHead: head, status: HTTPResponseStatus.ok)
-                
-                responseHead.headers.add(name: "content-length", value: "\(self.buffer!.readableBytes)")
+                self.responseHead?.headers.add(name: "content-length", value: "\(self.responseBodyBuffer!.readableBytes)")
             } else if head.uri.hasPrefix("/move") {
                 FileMoveProcessor.process(responder: self) {
                     success, result in
-                    self.buffer.writeString(result)
+                    if !success {
+                        self.responseHead?.status = .badRequest
+                    }
+                    self.responseBodyBuffer?.writeString(result)
                 }
             } else if head.uri.hasPrefix("/delete") {
                 FileDeleteProcessor.process(responder: self) {
                     success, result in
-                    self.buffer.writeString(result)
+                    if !success {
+                        self.responseHead?.status = .badRequest
+                    }
+                    self.responseBodyBuffer?.writeString(result)
                 }
+            } else if head.uri.hasPrefix("/upload") {
+                self.responseBodyBuffer?.writeString("{}")
+                self.responseHead?.headers.add(name: "content-length", value: "\(self.responseBodyBuffer!.readableBytes)")
             }
             
             context.write(wrapOutboundOut(.head(self.responseHead!)), promise: nil)
-            let body = HTTPServerResponsePart.body(.byteBuffer(self.buffer!))
+            let body = HTTPServerResponsePart.body(.byteBuffer(self.responseBodyBuffer!))
             self.context?.write(wrapOutboundOut(body), promise: nil)
             self.context?.writeAndFlush(wrapOutboundOut(.end(nil)), promise: nil)
         }
