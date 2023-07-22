@@ -11,6 +11,10 @@
 # Overview
 SwiftyUploader is a file upload server for iOS platform implemented based on SwiftNIO. If your iOS App needs to upload files from a computer or another phone to your App, you can use this library to quickly implement this feature. The Web page part of SwiftyUploader uses the code from [GCDWebUploader](https://github.com/swisspol/GCDWebServer/tree/master/GCDWebUploader/GCDWebUploader.bundle/Contents/Resources).
 
+<picture>
+  <img src="https://raw.githubusercontent.com/kejinlu/SwiftyUploader/main/assets/webui1.png" alt="SwiftyUploader logo" width="70%">
+</picture>
+
 # Usage
 
 ## Requirements
@@ -54,8 +58,4 @@ If you need web page support for international languages, you need to add the fo
 </dict>
 </plist>
 ```
-
-<picture>
-  <img src="https://raw.githubusercontent.com/kejinlu/SwiftyUploader/main/assets/webui1.png" alt="SwiftyUploader logo" width="70%">
-</picture>
 
