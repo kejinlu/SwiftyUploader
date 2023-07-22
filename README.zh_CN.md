@@ -30,7 +30,7 @@ import PackageDescription
 let package = Package(
     name: "YOUR_PROJECT_NAME",
     dependencies: [
-        .package(url: "https://github.com/kejinlu/SwiftyUploader.git", from: "1.0.0"),
+        .package(url: "https://github.com/kejinlu/SwiftyUploader.git", from: "0.0.1"),
     ]
 )
 ```
