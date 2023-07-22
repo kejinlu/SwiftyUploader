@@ -12,6 +12,11 @@
 SwiftyUploader是一个iOS平台上的基于 SwiftNIO 实现的文件上传服务器.如果你的iOS App 需要从电脑上或者别的手机上传文件到你的 App，你可以使用此库快速实现此功能。
 SwiftyUploader的Web页面部分使用了 [GCDWebUploader](https://github.com/swisspol/GCDWebServer/tree/master/GCDWebUploader/GCDWebUploader.bundle/Contents/Resources)的代码。
 
+<picture>
+  <img src="https://raw.githubusercontent.com/kejinlu/SwiftyUploader/main/assets/webui1.png" alt="SwiftyUploader logo" width="70%">
+</picture>
+
+
 # 使用
 
 ## 要求
@@ -56,6 +61,3 @@ uploader.run()
 </plist>
 ```
 
-<picture>
-  <img src="https://raw.githubusercontent.com/kejinlu/SwiftyUploader/main/assets/webui1.png" alt="SwiftyUploader logo" width="70%">
-</picture>
