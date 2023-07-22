@@ -21,7 +21,7 @@ SwiftyUploader的Web页面部分使用了 [GCDWebUploader](https://github.com/sw
 - Swift 5.8
 
 ## 集成
-你可以使用 [The Swift Package Manager](https://swift.org/package-manager) 进行集成，如果仅仅测试的可以直接使用本地依赖的方式进行测试
+你可以使用 [The Swift Package Manager](https://swift.org/package-manager) 进行集成，如果仅仅测试的可以在 Xcode 中添加依赖的窗口中输入 `https://github.com/kejinlu/SwiftyUploader.git` 添加依赖，或者直接使用本地依赖的方式进行测试。
 
 ```swift
 // swift-tools-version:5.8
