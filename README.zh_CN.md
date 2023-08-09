@@ -43,9 +43,36 @@ Then run `swift build` whenever you get prepared.
 
 ## 代码
 
+启动服务器:
+
 ```swift
 let uploader = SwiftyUploader()
-uploader.run()
+
+DispatchQueue.global().async {
+    do {
+        try uploader.run()
+    } catch {
+        DispatchQueue.main.async {
+            print("Failed to start server: \(error)")
+        }
+        return
+    }
+}
+```
+
+停止服务器:
+
+```swift
+DispatchQueue.global().async {
+    do {
+        try uploader.stop()
+    } catch {
+        DispatchQueue.main.async {
+            print("Failed to stop server: \(error)")
+        }
+        return
+    }
+}
 ```
 
 如果你需要 web 界面支持自适应的国际化语言，需要在 app 的 info.plist中增加下面的设置
