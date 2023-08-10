@@ -11,45 +11,34 @@ public class SwiftyUploader {
 
     public init() {}
 
-    public func run() {
-        DispatchQueue.global(qos: .background).async {
-            if self.loopGroup == nil {
-                self.loopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-            }
-            if let loopGroup = self.loopGroup {
-                let socketBootstrap = ServerBootstrap(group: loopGroup)
-                    .serverChannelOption(ChannelOptions.backlog, value: 256)
-                    .serverChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
-                    .childChannelInitializer {
-                        channel in
-                        channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                            channel.pipeline.addHandler(HTTPHandler())
-                        }
+    public func run() throws {
+        if self.loopGroup == nil {
+            self.loopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
+        }
+        if let loopGroup = self.loopGroup {
+            let socketBootstrap = ServerBootstrap(group: loopGroup)
+                .serverChannelOption(ChannelOptions.backlog, value: 256)
+                .serverChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
+                .childChannelInitializer {
+                    channel in
+                    channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
+                        channel.pipeline.addHandler(HTTPHandler())
                     }
-                    .childChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
-                    .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
-
-                do {
-                    let serverChannel =
-                        try socketBootstrap.bind(host: "0.0.0.0", port: 80)
-                            .wait()
-                    print("Server running on:", serverChannel.localAddress!)
-
-                    try serverChannel.closeFuture.wait()
-                } catch {
-                    fatalError("failed to start server: \(error)")
                 }
-            }
+                .childChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
+                .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
+            
+            let serverChannel =
+            try socketBootstrap.bind(host: "0.0.0.0", port: 80)
+                .wait()
+            print("Server running on:", serverChannel.localAddress!)
+            
+            try serverChannel.closeFuture.wait()
         }
     }
 
-    public func stop() {
-        do {
-            try self.loopGroup?.syncShutdownGracefully()
-        } catch {
-            print("Error shutting down \(error.localizedDescription)")
-            exit(0)
-        }
+    public func stop() throws {
+        try self.loopGroup?.syncShutdownGracefully()
         print("Client connection closed")
     }
 
