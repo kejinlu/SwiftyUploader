@@ -41,36 +41,14 @@ Then run `swift build` whenever you get prepared.
 
 ## Code
 
-Starting the server:
-
 ```swift
 let uploader = SwiftyUploader()
 
-DispatchQueue.global().async {
-    do {
-        try uploader.run()
-    } catch {
-        DispatchQueue.main.async {
-            print("Failed to start server: \(error)")
-        }
-        return
-    }
-}
-```
+// Starting the server:
+uploader.run()
 
-Stopping the server:
-
-```swift
-DispatchQueue.global().async {
-    do {
-        try uploader.stop()
-    } catch {
-        DispatchQueue.main.async {
-            print("Failed to stop server: \(error)")
-        }
-        return
-    }
-}
+// Stopping the server:
+uploader.stop()
 ```
 
 If you need web page support for international languages, you need to add the following settings in the app's info.plist
