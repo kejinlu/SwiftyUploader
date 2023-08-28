@@ -8,40 +8,73 @@ import NIOPosix
 @available(iOS 13.4, *)
 public class SwiftyUploader {
     private var loopGroup: MultiThreadedEventLoopGroup?
+    private var port: Int = 80
 
     public init() {}
 
-    public func run() throws {
-        if self.loopGroup == nil {
-            self.loopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
-        }
-        if let loopGroup = self.loopGroup {
-            let socketBootstrap = ServerBootstrap(group: loopGroup)
-                .serverChannelOption(ChannelOptions.backlog, value: 256)
-                .serverChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
-                .childChannelInitializer {
-                    channel in
-                    channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
-                        channel.pipeline.addHandler(HTTPHandler())
+    public func run() {
+        DispatchQueue.global(qos: .background).async {
+            if self.loopGroup == nil {
+                self.loopGroup = MultiThreadedEventLoopGroup(numberOfThreads: System.coreCount)
+            }
+            if let loopGroup = self.loopGroup {
+                let socketBootstrap = ServerBootstrap(group: loopGroup)
+                    .serverChannelOption(ChannelOptions.backlog, value: 256)
+                    .serverChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
+                    .childChannelInitializer {
+                        channel in
+                        channel.pipeline.configureHTTPServerPipeline(withErrorHandling: true).flatMap {
+                            channel.pipeline.addHandler(HTTPHandler())
+                        }
                     }
+                    .childChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
+                    .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
+                
+                self.port = self.getAvailablePort(using: socketBootstrap)
+                
+                do {
+                    let serverChannel = try socketBootstrap.bind(host: "0.0.0.0", port: self.port)
+                        .wait()
+                    print("Server running on:", serverChannel.localAddress!)
+                    
+                    try serverChannel.closeFuture.wait()
+                } catch {
+                    fatalError("Failed to start server on port \(self.port): \(error)")
                 }
-                .childChannelOption(ChannelOptions.socketOption(.so_reuseaddr), value: 1)
-                .childChannelOption(ChannelOptions.maxMessagesPerRead, value: 1)
-            
-            let serverChannel =
-            try socketBootstrap.bind(host: "0.0.0.0", port: 80)
-                .wait()
-            print("Server running on:", serverChannel.localAddress!)
-            
-            try serverChannel.closeFuture.wait()
+            }
+        }
+    }
+    
+    private func getAvailablePort(using bootstrap: ServerBootstrap) -> Int {
+        var currentPort = port
+        while true {
+            do {
+                let channel = try bootstrap.bind(host: "0.0.0.0", port: currentPort).wait()
+                channel.close(mode: .all, promise: nil) // Close the channel immediately
+                return currentPort
+            } catch let error as IOError where error.errnoCode == EADDRINUSE {
+                print("Port \(currentPort) is in use, trying another one...")
+                currentPort = Int.random(in: 1025...65535)
+            } catch {
+                fatalError("Error while trying to bind on port \(currentPort): \(error)")
+            }
         }
     }
 
-    public func stop() throws {
-        try self.loopGroup?.syncShutdownGracefully()
+    public func stop() {
+        do {
+            try self.loopGroup?.syncShutdownGracefully()
+        } catch {
+            print("Error shutting down \(error.localizedDescription)")
+            exit(0)
+        }
         print("Client connection closed")
     }
 
+    public func getPort() -> Int {
+        return self.port
+    }
+    
     public func getIPAddress() -> String {
         var address: String?
         var ifaddr: UnsafeMutablePointer<ifaddrs>? = nil
@@ -67,6 +100,14 @@ public class SwiftyUploader {
             }
             freeifaddrs(ifaddr)
         }
-        return address ?? ""
+        
+        if let address = address {
+            if port != 80 {
+                return "\(address):\(port)"
+            }
+            return address
+        } else {
+            return ""
+        }
     }
 }
